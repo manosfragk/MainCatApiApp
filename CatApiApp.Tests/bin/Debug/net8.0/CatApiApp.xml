@@ -1,0 +1,296 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CatApiApp</name>
+    </assembly>
+    <members>
+        <member name="T:CatApiApp.Controllers.CatController">
+            <summary>
+            Controller to handle cat-related API actions.
+            </summary>
+            <remarks>
+            Initializes a new instance of the <see cref="T:CatApiApp.Controllers.CatController"/> class.
+            </remarks>
+            <param name="catService">The service for handling cat-related operations.</param>
+            <param name="context">The database context for interacting with the database.</param>
+        </member>
+        <member name="M:CatApiApp.Controllers.CatController.#ctor(CatApiApp.Services.ICatService,CatApiApp.Data.DataContext)">
+            <summary>
+            Controller to handle cat-related API actions.
+            </summary>
+            <remarks>
+            Initializes a new instance of the <see cref="T:CatApiApp.Controllers.CatController"/> class.
+            </remarks>
+            <param name="catService">The service for handling cat-related operations.</param>
+            <param name="context">The database context for interacting with the database.</param>
+        </member>
+        <member name="M:CatApiApp.Controllers.CatController.FetchAndStoreCats">
+            <summary>
+            Fetches 25 cat images from an external API and stores them in the database.
+            </summary>
+            <remarks>
+            This method fetches cat images, including width, height, image URL, and associated tags,
+            and stores them in the SQL database. If a cat already exists, it will not be added again.
+            </remarks>
+            <response code="200">Successfully fetched and stored cats</response>
+            <response code="500">Internal server error while fetching or storing data</response>
+        </member>
+        <member name="M:CatApiApp.Controllers.CatController.GetCatById(System.Int32)">
+            <summary>
+            Retrieves a cat by its ID.
+            </summary>
+            <param name="id">The ID of the cat to retrieve</param>
+            <response code="200">Returns the requested cat</response>
+            <response code="404">If the cat is not found</response>
+        </member>
+        <member name="M:CatApiApp.Controllers.CatController.GetCats(System.Int32,System.Int32,System.String)">
+            <summary>
+            Retrieves a list of cats with optional paging and filtering by tag.
+            </summary>
+            <param name="page">The page number to retrieve. Defaults to 1.</param>
+            <param name="pageSize">The number of cats per page. Defaults to 10.</param>
+            <param name="tag">
+            An optional tag used to filter cats by their associated tag (e.g., temperament). 
+            If the tag is null or empty, all cats will be returned.
+            </param>
+            <returns>
+            An <see cref="T:Microsoft.AspNetCore.Mvc.IActionResult"/> containing a paginated list of cats, filtered by tag if provided.
+            </returns>
+            <response code="200">Returns the list of cats with paging support.</response>
+            <response code="404">If no cats are found.</response>
+        </member>
+        <member name="T:CatApiApp.Data.DataContext">
+            <summary>
+            Represents the database context for the Cat API application, responsible for managing the interaction
+            with the Cats and Tags entities in the database.
+            </summary>
+            <remarks>
+            Initializes a new instance of the <see cref="T:CatApiApp.Data.DataContext"/> class.
+            </remarks>
+            <param name="options">The options to be used by the DbContext.</param>
+        </member>
+        <member name="M:CatApiApp.Data.DataContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{CatApiApp.Data.DataContext})">
+            <summary>
+            Represents the database context for the Cat API application, responsible for managing the interaction
+            with the Cats and Tags entities in the database.
+            </summary>
+            <remarks>
+            Initializes a new instance of the <see cref="T:CatApiApp.Data.DataContext"/> class.
+            </remarks>
+            <param name="options">The options to be used by the DbContext.</param>
+        </member>
+        <member name="P:CatApiApp.Data.DataContext.Cats">
+            <summary>
+            Gets or sets the collection of <see cref="T:CatApiApp.Models.CatEntity"/> stored in the database.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Data.DataContext.Tags">
+            <summary>
+            Gets or sets the collection of <see cref="T:CatApiApp.Models.TagEntity"/> stored in the database.
+            </summary>
+        </member>
+        <member name="M:CatApiApp.Data.DataContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <summary>
+            Configures the relationships between the Cats and Tags entities.
+            </summary>
+            <param name="modelBuilder">The builder used to define the entity relationships.</param>
+        </member>
+        <member name="T:CatApiApp.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:CatApiApp.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:CatApiApp.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:CatApiApp.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:CatApiApp.Models.CatEntity">
+            <summary>
+            Represents the CatEntity stored in the database.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.CatEntity.Id">
+            <summary>
+            Gets or sets the unique identifier for the cat entity.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.CatEntity.CatId">
+            <summary>
+            Gets or sets the unique identifier for the cat image from the external Cat API.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.CatEntity.Width">
+            <summary>
+            Gets or sets the width of the cat image.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.CatEntity.Height">
+            <summary>
+            Gets or sets the height of the cat image.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.CatEntity.Image">
+            <summary>
+            Gets or sets the URL of the cat image.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.CatEntity.Created">
+            <summary>
+            Gets or sets the timestamp of when the cat entity was created.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.CatEntity.Tags">
+            <summary>
+            Gets or sets the list of tags associated with the cat.
+            </summary>
+        </member>
+        <member name="T:CatApiApp.Models.TagEntity">
+            <summary>
+            Represents the TagEntity related to a cat's temperament or breed.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.TagEntity.Id">
+            <summary>
+            Gets or sets the unique identifier for the tag entity.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.TagEntity.Name">
+            <summary>
+            Gets or sets the name of the tag, describing the cat's temperament.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.TagEntity.Created">
+            <summary>
+            Gets or sets the timestamp of when the tag entity was created.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Models.TagEntity.Cats">
+            <summary>
+            Gets or sets the list of cats associated with the tag.
+            </summary>
+        </member>
+        <member name="T:CatApiApp.Services.CatService">
+            <summary>
+            Service for managing cat-related operations, including fetching and storing cat data from an external API.
+            </summary>
+            <remarks>
+            Initializes a new instance of the <see cref="T:CatApiApp.Services.CatService"/> class.
+            </remarks>
+            <param name="catApiClient">The client used to interact with the external Cat API.</param>
+            <param name="context">The database context used to interact with the Cats and Tags entities.</param>
+        </member>
+        <member name="M:CatApiApp.Services.CatService.#ctor(CatApiApp.Services.ICatApiClient,CatApiApp.Data.DataContext)">
+            <summary>
+            Service for managing cat-related operations, including fetching and storing cat data from an external API.
+            </summary>
+            <remarks>
+            Initializes a new instance of the <see cref="T:CatApiApp.Services.CatService"/> class.
+            </remarks>
+            <param name="catApiClient">The client used to interact with the external Cat API.</param>
+            <param name="context">The database context used to interact with the Cats and Tags entities.</param>
+        </member>
+        <member name="M:CatApiApp.Services.CatService.FetchAndStoreCatsAsync">
+            <summary>
+            Fetches 25 cat images from the external API and stores them in the database.
+            </summary>
+        </member>
+        <member name="M:CatApiApp.Services.CatService.ExtractTagsFromBreed(System.Collections.Generic.List{CatApiApp.Services.CatBreed})">
+            <summary>
+            Extracts tags from cat breeds (temperament) and returns a list of associated tags.
+            </summary>
+            <param name="breeds">The list of breeds associated with the cat.</param>
+            <returns>A list of <see cref="T:CatApiApp.Models.TagEntity"/> objects representing the cat's temperament.</returns>
+        </member>
+        <member name="T:CatApiApp.Services.ICatApiClient">
+            <summary>
+            Interface for interacting with the external Cat API.
+            </summary>
+        </member>
+        <member name="M:CatApiApp.Services.ICatApiClient.FetchCatImagesAsync">
+            <summary>
+            Fetches 25 cat images with breeds from the external API.
+            </summary>
+            <returns>A task that represents the asynchronous operation. The task result contains a list of cat images.</returns>
+        </member>
+        <member name="T:CatApiApp.Services.CatApiResponse">
+            <summary>
+            Represents the response from the external Cat API for cat images.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Services.CatApiResponse.Id">
+            <summary>
+            Gets or sets the unique identifier for the cat image.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Services.CatApiResponse.Url">
+            <summary>
+            Gets or sets the URL of the cat image.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Services.CatApiResponse.Width">
+            <summary>
+            Gets or sets the width of the cat image.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Services.CatApiResponse.Height">
+            <summary>
+            Gets or sets the height of the cat image.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Services.CatApiResponse.Breeds">
+            <summary>
+            Gets or sets the list of breeds associated with the cat image.
+            </summary>
+        </member>
+        <member name="T:CatApiApp.Services.CatBreed">
+            <summary>
+            Represents a breed of the cat, including temperament.
+            </summary>
+        </member>
+        <member name="P:CatApiApp.Services.CatBreed.Temperament">
+            <summary>
+            Gets or sets the temperament of the cat breed.
+            </summary>
+        </member>
+        <member name="T:CatApiApp.Services.ICatService">
+            <summary>
+            Defines a contract for fetching and storing cat images from an external API.
+            </summary>
+        </member>
+        <member name="M:CatApiApp.Services.ICatService.FetchAndStoreCatsAsync">
+            <summary>
+            Fetches 25 cat images from an external API and stores them in the database.
+            </summary>
+            <remarks>
+            This method interacts with the external Cat API to fetch cat images,
+            including their associated metadata (such as width, height, image URL, and tags).
+            The fetched data is then stored in the SQL database, and duplicate entries are avoided
+            based on the <c>CatId</c> field.
+            </remarks>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation of fetching and storing cats.
+            </returns>
+        </member>
+        <member name="T:Refit.Implementation.Generated">
+            <inheritdoc />
+        </member>
+        <member name="T:Refit.Implementation.Generated.CatApiAppServicesICatApiClient">
+            <inheritdoc />
+        </member>
+        <member name="P:Refit.Implementation.Generated.CatApiAppServicesICatApiClient.Client">
+            <inheritdoc />
+        </member>
+        <member name="M:Refit.Implementation.Generated.CatApiAppServicesICatApiClient.#ctor(System.Net.Http.HttpClient,Refit.IRequestBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Refit.Implementation.Generated.CatApiAppServicesICatApiClient.FetchCatImagesAsync">
+            <inheritdoc />
+        </member>
+        <member name="M:Refit.Implementation.Generated.CatApiAppServicesICatApiClient.CatApiApp#Services#ICatApiClient#FetchCatImagesAsync">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
