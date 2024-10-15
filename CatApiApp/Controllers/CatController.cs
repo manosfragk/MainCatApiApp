@@ -1,4 +1,5 @@
 ﻿using CatApiApp.Data;
+using CatApiApp.Dtos;
 using CatApiApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -66,7 +67,20 @@ namespace CatApiApp.Controllers
         {
             var cat = await _context.Cats.Include(c => c.Tags).FirstOrDefaultAsync(c => c.Id == id);
             if (cat == null) return NotFound("Cat not found.");
-            return Ok(cat);
+
+            // Map CatEntity to CatDto
+            var catDto = new CatDto
+            {
+                Id = cat.Id,
+                CatId = cat.CatId,
+                Width = cat.Width,
+                Height = cat.Height,
+                Image = cat.Image,
+                Created = cat.Created,
+                Tags = cat.Tags.Select(t => t.Name).ToList()
+            };
+
+            return Ok(catDto);
         }
 
         /// <summary>
@@ -86,7 +100,7 @@ namespace CatApiApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCats(int page = 1, int pageSize = 10, string tag = null)
         {
-            var query = _context.Cats.AsQueryable();
+            var query = _context.Cats.Include(c=>c.Tags).AsQueryable();
 
             if (!string.IsNullOrEmpty(tag))
             {
@@ -102,7 +116,19 @@ namespace CatApiApp.Controllers
                 return NotFound("No cats found.");
             }
 
-            return Ok(pagedCats);
+            // Map each CatEntity to CatDto
+            var catDtos = pagedCats.Select(cat => new CatDto
+            {
+                Id = cat.Id,
+                CatId = cat.CatId,
+                Width = cat.Width,
+                Height = cat.Height,
+                Image = cat.Image,
+                Created = cat.Created,
+                Tags = cat.Tags.Select(t => t.Name).ToList()
+            }).ToList();
+
+            return Ok(catDtos);
         }
 
     }
