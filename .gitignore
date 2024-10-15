@@ -396,3 +396,15 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Ignore build results
+bin/
+obj/
+
+# Ignore Refit output
+refit/
+
+# Ignore Debug and Release folders
+[Dd]ebug/
+[Rr]elease/
+
