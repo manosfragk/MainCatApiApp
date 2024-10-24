@@ -1,6 +1,6 @@
 ﻿using Refit;
 
-namespace CatApiApp.Services
+namespace CatApiApp.Interfaces
 {
     /// <summary>
     /// Interface for interacting with the external Cat API.

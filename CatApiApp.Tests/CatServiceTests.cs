@@ -1,4 +1,5 @@
 using CatApiApp.Data;
+using CatApiApp.Interfaces;
 using CatApiApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -7,14 +8,18 @@ namespace CatApiApp.Tests
 {
     public class CatServiceTests
     {
-        private readonly CatService _catService;
         private readonly Mock<ICatApiClient> _mockCatApiClient;
+        private readonly Mock<ICatRepository> _mockCatRepository;
+        private readonly Mock<ITagRepository> _mockTagRepository;
         private readonly DataContext _context;
+        private readonly CatService _catService;
 
         public CatServiceTests()
         {
             // Mock the ICatApiClient to simulate external API
             _mockCatApiClient = new Mock<ICatApiClient>();
+            _mockCatRepository = new Mock<ICatRepository>();
+            _mockTagRepository = new Mock<ITagRepository>();
 
             // Set up in-memory database
             var options = new DbContextOptionsBuilder<DataContext>()
@@ -23,7 +28,7 @@ namespace CatApiApp.Tests
             _context = new DataContext(options);
 
             // Initialize the service with the mocked client and in-memory database
-            _catService = new CatService(_mockCatApiClient.Object, _context);
+            _catService = new CatService(_mockCatApiClient.Object, _mockCatRepository.Object, _mockTagRepository.Object);
         }
 
         [Fact]

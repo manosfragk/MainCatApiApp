@@ -1,4 +1,4 @@
-﻿namespace CatApiApp.Services
+﻿namespace CatApiApp.Interfaces
 {
     /// <summary>
     /// Defines a contract for fetching and storing cat images from an external API.

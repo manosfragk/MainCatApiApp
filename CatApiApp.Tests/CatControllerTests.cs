@@ -1,7 +1,7 @@
 ﻿using CatApiApp.Controllers;
 using CatApiApp.Data;
+using CatApiApp.Interfaces;
 using CatApiApp.Models;
-using CatApiApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;

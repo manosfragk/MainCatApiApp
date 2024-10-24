@@ -1,4 +1,5 @@
 using CatApiApp.Data;
+using CatApiApp.Interfaces;
 using CatApiApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Refit;

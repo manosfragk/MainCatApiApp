@@ -1,6 +1,6 @@
 ﻿using CatApiApp.Data;
 using CatApiApp.Dtos;
-using CatApiApp.Services;
+using CatApiApp.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
