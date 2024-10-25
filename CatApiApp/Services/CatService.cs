@@ -1,18 +1,16 @@
-﻿using CatApiApp.Data;
-using CatApiApp.Interfaces;
+﻿using CatApiApp.Interfaces;
 using CatApiApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace CatApiApp.Services {
+
     /// <summary>
     /// Service for managing cat-related operations, including fetching and storing cat data from an external API.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of the <see cref="CatService"/> class.
-    /// </remarks>
     /// <param name="catApiClient">The client used to interact with the external Cat API.</param>
-    /// <param name="context">The database context used to interact with the Cats and Tags entities.</param>
+    /// <param name="catRepository">The repository interface for managing cat entities.</param>
+    /// <param name="tagRepository">The repository interface for managing tag entities.</param>
     public class CatService(ICatApiClient catApiClient, ICatRepository catRepository, ITagRepository tagRepository) : ICatService {
+
         private readonly ICatApiClient _catApiClient = catApiClient;
         private readonly ICatRepository _catRepository = catRepository;
         private readonly ITagRepository _tagRepository = tagRepository;
@@ -20,6 +18,7 @@ namespace CatApiApp.Services {
         /// <summary>
         /// Fetches 25 cat images from the external API and stores them in the database.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task FetchAndStoreCatsAsync() {
             var catImages = await _catApiClient.FetchCatImagesAsync();
 
@@ -71,5 +70,4 @@ namespace CatApiApp.Services {
             return tags;
         }
     }
-
 }
