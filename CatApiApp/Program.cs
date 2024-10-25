@@ -1,5 +1,6 @@
 using CatApiApp.Data;
 using CatApiApp.Interfaces;
+using CatApiApp.Repositories;
 using CatApiApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Refit;
@@ -54,8 +55,10 @@ builder.Services.AddRefitClient<ICatApiClient>()
         c.DefaultRequestHeaders.Add("x-api-key", apiKey);
     });
 
-// Register CatService in DI container
+// Register services in DI container
 builder.Services.AddScoped<ICatService, CatService>();
+builder.Services.AddScoped<ICatRepository, CatRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 
 // Ensure Kestrel is listening on port 80
 if (builder.Environment.IsProduction())
