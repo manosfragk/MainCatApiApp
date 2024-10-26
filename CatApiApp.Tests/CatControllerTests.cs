@@ -1,5 +1,6 @@
 ﻿using CatApiApp.Controllers;
 using CatApiApp.Data;
+using CatApiApp.Dtos;
 using CatApiApp.Interfaces;
 using CatApiApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -63,9 +64,8 @@ namespace CatApiApp.Tests
         }
 
         [Fact]
-        public async Task GetCatById_ShouldReturnOk_WhenCatExists()
-        {
-            // Arrange: Add a test cat to the in-memory database
+        public async Task GetCatById_ShouldReturnOk_WhenCatExists() {
+            // Arrange: Add a test cat entity to the in-memory database
             var testCat = new CatEntity { Id = 1, CatId = "testcat", Width = 300, Height = 400, Image = "http://testcat.com" };
             _context.Cats.Add(testCat);
             await _context.SaveChangesAsync();
@@ -73,11 +73,15 @@ namespace CatApiApp.Tests
             // Act: Call the GetCatById method
             var result = await _controller.GetCatById(1);
 
-            // Assert: Ensure it returns an OK result with the cat
+            // Assert: Ensure it returns an OK result with the CatDto
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedCat = Assert.IsType<CatEntity>(okResult.Value);
-            Assert.Equal(1, returnedCat.Id);
+            var returnedCat = Assert.IsType<CatDto>(okResult.Value); 
+            Assert.Equal("testcat", returnedCat.CatId);
+            Assert.Equal(300, returnedCat.Width);
+            Assert.Equal(400, returnedCat.Height);
+            Assert.Equal("http://testcat.com", returnedCat.Image);
         }
+
 
         [Fact]
         public async Task GetCatById_ShouldReturnNotFound_WhenCatDoesNotExist()
@@ -91,11 +95,9 @@ namespace CatApiApp.Tests
         }
 
         [Fact]
-        public async Task GetCats_ShouldReturnOk_WithPaging()
-        {
+        public async Task GetCats_ShouldReturnOk_WithPaging() {
             // Arrange: Add multiple cats to the in-memory database
-            for (int i = 1; i <= 10; i++)
-            {
+            for (int i = 1; i <= 10; i++) {
                 _context.Cats.Add(new CatEntity { CatId = $"cat{i}", Width = 300, Height = 400, Image = $"http://testcat.com/cat{i}" });
             }
             await _context.SaveChangesAsync();
@@ -105,13 +107,12 @@ namespace CatApiApp.Tests
 
             // Assert: Ensure it returns an OK result with 5 cats
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedCats = Assert.IsType<List<CatEntity>>(okResult.Value);
+            var returnedCats = Assert.IsType<List<CatDto>>(okResult.Value);
             Assert.Equal(5, returnedCats.Count); // Ensure 5 cats were returned
         }
 
         [Fact]
-        public async Task GetCats_ShouldReturnNotFound_WhenNoCatsExist()
-        {
+        public async Task GetCats_ShouldReturnNotFound_WhenNoCatsExist() {
             // Act: Call the GetCats method when no cats exist in the database
             var result = await _controller.GetCats();
 
@@ -122,11 +123,10 @@ namespace CatApiApp.Tests
 
 
         [Fact]
-        public async Task GetCats_ShouldFilterByTag()
-        {
+        public async Task GetCats_ShouldFilterByTag() {
             // Arrange: Add cats with tags to the in-memory database
-            var tag1 = new TagEntity { Name = "Playful" }; // No need to set the Id, let EF auto-generate it
-            var tag2 = new TagEntity { Name = "Calm" };    // No need to set the Id, let EF auto-generate it
+            var tag1 = new TagEntity { Name = "Playful" };
+            var tag2 = new TagEntity { Name = "Calm" };
 
             var cat1 = new CatEntity { CatId = "cat1", Width = 300, Height = 400, Image = "http://testcat.com/cat1", Tags = new List<TagEntity> { tag1 } };
             var cat2 = new CatEntity { CatId = "cat2", Width = 300, Height = 400, Image = "http://testcat.com/cat2", Tags = new List<TagEntity> { tag2 } };
@@ -139,7 +139,7 @@ namespace CatApiApp.Tests
 
             // Assert: Ensure it returns only cats with the "Playful" tag
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedCats = Assert.IsType<List<CatEntity>>(okResult.Value);
+            var returnedCats = Assert.IsType<List<CatDto>>(okResult.Value);
             Assert.Single(returnedCats); // Only one cat should be returned
             Assert.Equal("cat1", returnedCats[0].CatId); // Ensure the correct cat is returned
         }
