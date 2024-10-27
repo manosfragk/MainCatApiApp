@@ -5,7 +5,7 @@ services:
       - ConnectionStrings__DefaultConnection=Server=db;Database=CatApiAppDb;User=sa;Password=m3r3d@230592!;Trusted_Connection=False;TrustServerCertificate=True;
       - ConnectionStrings__Redis=redis:6379
     ports:
-      - "8080:80"  # Use a different port for development if needed
+      - "8081:80"  # Use a different port for development if needed
     depends_on:
       - db
       - redis
