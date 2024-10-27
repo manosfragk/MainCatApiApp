@@ -16,6 +16,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
+// Add Redis service
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "CatApiApp_";
+});
+
 // Add Swagger service configuration
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -55,10 +61,14 @@ builder.Services.AddRefitClient<ICatApiClient>()
         c.DefaultRequestHeaders.Add("x-api-key", apiKey);
     });
 
-// Register services in DI container
-builder.Services.AddScoped<ICatService, CatService>();
+// Register Repositories
 builder.Services.AddScoped<ICatRepository, CatRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+
+// Register Services
+builder.Services.AddScoped<ICatService, CatService>();
+
+
 
 // Ensure Kestrel is listening on port 80
 if (builder.Environment.IsProduction())

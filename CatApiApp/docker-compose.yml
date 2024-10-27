@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     image: catapp-image
@@ -11,8 +9,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=db;Database=CatApiAppDb;User=sa;Password=m3r3d@230592!;Trusted_Connection=False;TrustServerCertificate=True;
+      - ConnectionStrings__Redis=redis:6379
     depends_on:
       - db
+      - redis
 
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -23,6 +23,11 @@ services:
       - "1433:1433"  # Expose SQL Server on the default port
     volumes:
       - sqlserverdata:/var/opt/mssql  # Persist the database data
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"  # Expose Redis on the default port
 
 volumes:
   sqlserverdata:
