@@ -1,8 +1,9 @@
 ﻿using CatApiApp.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace CatApiApp.Data
-{
+namespace CatApiApp.Data {
     /// <summary>
     /// Represents the database context for the Cat API application, responsible for managing the interaction
     /// with the Cats and Tags entities in the database.
@@ -11,8 +12,7 @@ namespace CatApiApp.Data
     /// Initializes a new instance of the <see cref="DataContext"/> class.
     /// </remarks>
     /// <param name="options">The options to be used by the DbContext.</param>
-    public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
-    {
+    public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<IdentityUser>(options) {
 
         /// <summary>
         /// Gets or sets the collection of <see cref="CatEntity"/> stored in the database.
@@ -28,8 +28,11 @@ namespace CatApiApp.Data
         /// Configures the relationships between the Cats and Tags entities.
         /// </summary>
         /// <param name="modelBuilder">The builder used to define the entity relationships.</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+
+            // Call the base method to configure Identity-related tables
+            base.OnModelCreating(modelBuilder);
+
             // Many-to-many relationship between Cats and Tags
             modelBuilder.Entity<CatEntity>()
                 .HasMany(c => c.Tags)

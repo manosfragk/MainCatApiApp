@@ -2,11 +2,40 @@ using CatApiApp.Data;
 using CatApiApp.Interfaces;
 using CatApiApp.Repositories;
 using CatApiApp.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Refit;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Identity
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<DataContext>()
+    .AddDefaultTokenProviders();
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options => {
+    options.TokenValidationParameters = new TokenValidationParameters {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
+// Add authorization policies and services
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 builder.Services.AddControllers()
@@ -38,6 +67,32 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
+    // Define the security scheme for JWT Bearer
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Enter your token in the text input below.\n\nExample: 'eyJhbGciOiJIUzI1NiIsInR5cCI...'"
+    });
+
+    // Add security requirements for all endpoints
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new List<string>()
+        }
+    });
+
     // Add the XML comment documentation
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -66,6 +121,7 @@ builder.Services.AddScoped<ICatRepository, CatRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 
 // Register Services
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICatService, CatService>();
 
 
@@ -103,6 +159,10 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
     app.UseDeveloperExceptionPage();
 }
+
+// Use authentication and authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseSwagger();
 app.UseSwaggerUI();

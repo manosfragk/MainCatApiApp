@@ -1,6 +1,7 @@
 ﻿using CatApiApp.Data;
 using CatApiApp.Dtos;
 using CatApiApp.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -31,6 +32,7 @@ namespace CatApiApp.Controllers
         /// </remarks>
         /// <response code="200">Successfully fetched and stored cats</response>
         /// <response code="500">Internal server error while fetching or storing data</response>
+        [Authorize]
         [HttpPost("fetch")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -60,6 +62,7 @@ namespace CatApiApp.Controllers
         /// <param name="id">The ID of the cat to retrieve</param>
         /// <response code="200">Returns the requested cat</response>
         /// <response code="404">If the cat is not found</response>
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,6 +100,7 @@ namespace CatApiApp.Controllers
         /// </returns>
         /// <response code="200">Returns the list of cats with paging support.</response>
         /// <response code="404">If no cats are found.</response>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCats(int page = 1, int pageSize = 10, string tag = null)
         {
