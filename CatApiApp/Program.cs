@@ -7,10 +7,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Refit;
+using Serilog.Events;
+using Serilog;
 using System.Reflection;
 using System.Text;
+using CatApiApp.Middlewares;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)  // Set to Warning for Microsoft logs
+    .MinimumLevel.Override("System", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)  // Rolling file log
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Configure Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -160,6 +173,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 // Use authentication and authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
@@ -170,3 +185,5 @@ app.UseSwaggerUI();
 app.MapControllers();
 
 app.Run();
+
+Log.CloseAndFlush();  // Ensures any remaining log entries are written before the app closes
